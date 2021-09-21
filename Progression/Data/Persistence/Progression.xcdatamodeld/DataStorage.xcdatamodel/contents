@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20F71" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Excercise" representedClassName="Excercise" syncable="YES">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="scores" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Score" inverseName="excercise" inverseEntity="Score"/>
+    </entity>
+    <entity name="Score" representedClassName=".Score" syncable="YES">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="reps" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="sets" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="weight" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <relationship name="excercise" maxCount="1" deletionRule="Nullify" destinationEntity="Excercise" inverseName="scores" inverseEntity="Excercise"/>
+    </entity>
+    <elements>
+        <element name="Excercise" positionX="-45" positionY="54" width="128" height="88"/>
+        <element name="Score" positionX="-230.1411743164062" positionY="-72.0579833984375" width="128" height="133"/>
+    </elements>
+</model>
