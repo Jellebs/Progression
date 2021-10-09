@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct InteractionView<Content:View>: View {
+struct InteractionView<Content:View>: View, KeyboardReadable {
     @Environment(\.colorScheme) var colorScheme
     @Binding var isActive: Bool
     let content: Content
@@ -17,6 +17,7 @@ struct InteractionView<Content:View>: View {
         _isActive = isActive
         self.height = height
     }
+    @State var isKeyboardShown: Bool = false
     var body: some View {
         ZStack {
             Button {
@@ -28,14 +29,18 @@ struct InteractionView<Content:View>: View {
             VStack {
                 Spacer()
                 HStack {
-                    content
+                    content.padding(.bottom, isKeyboardShown ? 200 : 0)
+                    
                 }.mask(RoundedRectangle(cornerRadius: 12))
-                .frame(height: height)
+                .frame(height: isKeyboardShown ? height + 200 : height)
+                .onReceive(keyboardPublisher) { info in
+                    isKeyboardShown = info
+                }
                 .background(
                     RoundedRectangle(cornerRadius: 12)
                         .topDownColorSettings()
                 )
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
-        }.ignoresSafeArea()
+        }.offset(y: 10).ignoresSafeArea()
     }
 }

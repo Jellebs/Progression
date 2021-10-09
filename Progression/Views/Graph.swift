@@ -39,25 +39,28 @@ fileprivate struct GraphView: View {
     }
     
     var body: some View {
+        
         ZStack {
-//            makeLines()
-//                .stroke(lineWidth: 2)
-//                .foregroundColor(.black).opacity(0.4)
-            makePoints()
-                .stroke(lineWidth: 4)
-                .secondaryOppositeColorSetting()
-            ForEach(0..<graphScores.count, id: \.self) { i in
-                makeDot(point: i)
-                    .primaryOppositeColorSetting()
-                    .onTapGesture {
-                        viewModel.detailedScore = graphScores[i].convertToJBScore()
-                        viewModel.detailViewIsActive.toggle()
-                    }
+            if graphScores.count == 0 { Color.clear.frame(maxWidth: .infinity, maxHeight: .infinity) }
+            else {
+                //            makeLines()
+                //                .stroke(lineWidth: 2)
+                //                .foregroundColor(.black).opacity(0.4)
+                makePoints()
+                    .stroke(lineWidth: 4)
+                    .secondaryOppositeColorSetting()
+                ForEach(0..<graphScores.count, id: \.self) { i in
+                    makeDot(point: i)
+                        .primaryOppositeColorSetting()
+                        .onTapGesture {
+                            viewModel.detailedScore = graphScores[i].convertToJBScore()
+                            viewModel.detailViewIsActive.toggle()
+                        }
+                }
+                makeLabels()
+                    .foregroundColor(.black)
             }
-            makeLabels()
-                .foregroundColor(.black)
-        }
-        .background(
+        }.background(
             RoundedRectangle(cornerRadius: 8)
                 .secondaryColorSetting()
         )
@@ -117,7 +120,8 @@ fileprivate struct GraphView: View {
     //MARK: X Calculator
     private func columnXPoint(point: Int) -> CGFloat {
         let percentage = CGFloat(point + 1) / CGFloat(graphScores.count)
-        let value = point > 0 || oneGraphscore() ?  graphWidth * percentage : padding*2
+        print(graphWidth)
+        let value = graphWidth * percentage - padding
         return value
     }
     //MARK: Y Calculator

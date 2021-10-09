@@ -19,7 +19,6 @@ class DataManager {
     init() {
         scores = fetchScores()
         exercises = fetchExercises()
-        encode()
     }
     
     func encode() {
