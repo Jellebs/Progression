@@ -43,12 +43,13 @@ struct WeightLogo: View {
         path.addLine(to: CGPoint(x: 0.7 * scale, y: 0.5 * scale))
         return path
     }
+    @Environment(\.colorScheme) var colorScheme
     var body: some View {
         ZStack {
             line
-                .stroke(lineWidth: scale/30)
+                .stroke(lineWidth: colorScheme == .dark ? scale/30 : scale/20)
             path
-                .stroke(lineWidth: scale/30)
+                .stroke(lineWidth: colorScheme == .dark ? scale/30 : scale/20)
         }.frame(width: scale, height: scale)
     }
 }

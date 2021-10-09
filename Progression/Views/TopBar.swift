@@ -7,30 +7,40 @@
 
 import Foundation
 import SwiftUI
-struct TopBar<Content: View>: View {
-    let content: Content
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
+struct TopBar: View {
+    @Environment(\.colorScheme) var colorScheme
+    let onPlusButton: () -> Void
+    init(_ onPlusButton: @escaping () -> Void) {
+        self.onPlusButton = { onPlusButton } ()
     }
     @EnvironmentObject var viewModel: ViewModel
     var body: some View {
         VStack {
             HStack {
                 Button {
-                    viewModel.excerciseViewIsActive.toggle()
+                    viewModel.exerciseViewIsActive.toggle()
                 } label: {
                     WeightLogo(scale: 30)
                 }
                 Spacer()
-                content
+                Button {
+                    onPlusButton()
+                } label: {
+                    Image(systemName: "plus")
+                        .resizable()
+                        .clipped()
+                        .frame(width: 20, height: 20)
+                }
             }
             HStack {
                 Spacer()
                 VStack {
                     Text("Progression")
                         .font(.largeTitle)
+                        .foregroundColor(.primary)
                     Text("Keep it simple")
                         .font(.footnote)
+                        .foregroundColor(.primary)
                 }
                 Spacer()
             }

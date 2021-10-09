@@ -11,12 +11,13 @@ struct ScoreDetails: View {
     @EnvironmentObject var viewModel: ViewModel
     var body: some View {
         InteractionView(isActive: $viewModel.detailViewIsActive) {
-            VStack {
-                ScoreCell_MainView(score: $viewModel.detailedScore, colorTheme: .white)
-            }.padding()
-            .onChange(of: viewModel.detailViewIsActive) { _ in
-                viewModel.saveScore(score: viewModel.detailedScore)
-            }
+            ScoreCell(colorTheme: .white)
+                .environmentObject(viewModel.detailedScore)
+                .frame(height: 200)
+        }
+        .onChange(of: viewModel.detailedScore.stats) { _ in
+            viewModel.saveScore(score: viewModel.detailedScore)
+            
         }
     }
 }

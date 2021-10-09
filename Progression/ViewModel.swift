@@ -9,15 +9,19 @@ import Foundation
 import SwiftUI
 final class ViewModel: ObservableObject {
     
-    @Published var excercises: [Excercise] = []
+    @Published var exercises: [Excercise] = [] {
+        didSet {
+            objectWillChange.send()
+        }
+    }
     @Published var scores: [JBScore] = [
     ] 
-    @Published var newExcerciseIsActive: Bool = false
+    @Published var newExerciseIsActive: Bool = false
     @Published var newScoreIsActive: Bool = false
     //Excercise
-    @Published var excerciseViewIsActive: Bool = false
+    @Published var exerciseViewIsActive: Bool = false
     @Published var graphIsShown: Bool = false
-    @Published var currentExcercise: Excercise?
+    @Published var currentExercise: Excercise?
     //DetailScore
     @Published var detailedScore: JBScore = JBScore()
     @Published var detailViewIsActive: Bool = false
@@ -25,16 +29,19 @@ final class ViewModel: ObservableObject {
     
     init() {
         fetchScores()
-        fetchExcercises()
+        fetchExercises()
+        if !hasConfigured() && exercises.count == 0 {
+            exerciseViewIsActive = true
+        }
     }
     
     //Excercise
-    func fetchExcercises() {
-        excercises = dataManager.excercises
+    func fetchExercises() {
+        exercises = dataManager.exercises
     }
     func addExcercise(name: String) {
-        dataManager.addExcercise(name: name)
-        fetchExcercises()
+        dataManager.addExercise(name: name)
+        fetchExercises()
     }
     
     //Score
@@ -47,7 +54,7 @@ final class ViewModel: ObservableObject {
             return dataManager.update(for: score)
         }
         dataManager.addScore(score: score)
-        fetchExcercises()
+        fetchScores()
     }
     
     
@@ -59,6 +66,17 @@ final class ViewModel: ObservableObject {
     func deleteScore(score: JBScore) {
         dataManager.delete(for: score)
         fetchScores()
+        fetchExercises()
+        detailViewIsActive.toggle()
+    }
+    func hasConfigured() -> Bool {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: "hasConfigured") { return true }
+        else { return false }
+    }
+    func configure() {
+        let defaults = UserDefaults.standard
+        defaults.setValue(true, forKey: "hasConfigured")
     }
     
 }

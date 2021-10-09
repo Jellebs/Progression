@@ -9,15 +9,28 @@ import Foundation
 import SwiftUI
 
 class JBScore: Identifiable, ObservableObject {
+    @EnvironmentObject var viewModel: ViewModel
     var id: UUID
     var date: Date
     var excercise: Excercise
     var volume: Int {
         return sets * reps * Int(weight)
     }
-    var sets: Int = 0
-    var reps: Int = 0
-    var weight: Double = 0
+    var sets: Int = 0 {
+        didSet {
+            objectWillChange.send()
+        }
+    }
+    var reps: Int = 0 {
+        didSet {
+            objectWillChange.send()
+        }
+    }
+    var weight: Double = 0 {
+        didSet {
+            objectWillChange.send()
+        }
+    }
     var stats: Stats {
         get {
             Stats(sets: sets, reps: reps, weight: weight)
@@ -25,7 +38,6 @@ class JBScore: Identifiable, ObservableObject {
             sets = newValue.sets
             reps = newValue.reps
             weight = newValue.weight
-            objectWillChange.send()
         }
     }
     init(excercise: Excercise = Excercise(), id: UUID = UUID(), stats: Stats = Stats(sets: 0, reps: 0, weight: 0)) {
@@ -37,7 +49,11 @@ class JBScore: Identifiable, ObservableObject {
         self.id = id
     }
 }
-class Stats {
+class Stats: Equatable {
+    static func == (lhs: Stats, rhs: Stats) -> Bool {
+        return lhs.reps == rhs.reps && lhs.sets == rhs.sets && lhs.weight == rhs.weight
+    }
+
     var sets: Int
     var reps: Int
     var weight: Double

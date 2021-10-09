@@ -9,27 +9,34 @@ import SwiftUI
 
 struct NewScore: View {
     @EnvironmentObject var viewModel: ViewModel
-    @State var selectedExcercise: Excercise
+    @State var selectedExercise: Excercise?
     var body: some View {
         VStack {
-            HStack {
-                Picker("Excercises", selection: $selectedExcercise) {
-                    ForEach(viewModel.excercises, id: \.self) { excercise in
-                        Text(excercise.name).tag(excercise.self).foregroundColor(.white)
+            if selectedExercise != nil {
+                HStack {
+                    Picker("Exercises", selection: $selectedExercise) {
+                        ForEach(viewModel.exercises, id: \.self) { excercise in
+                            PickerCell(excercise: excercise)
+                                
+                        }
+                    }
+                    Spacer()
+                    Button {
+                        if !viewModel.hasConfigured() { viewModel.configure() }
+                        viewModel.addScore(excercise: selectedExercise!)
+                        viewModel.newScoreIsActive.toggle()
+                    } label: {
+                        Image(systemName: "checkmark")
                             .font(.title2)
                     }
+                    .foregroundColor(.black)
+                }.padding()
+            } else {
+                HStack {
+                    Text("No exercises yet made")
                 }
-                Spacer()
-                Button {
-                    viewModel.addScore(excercise: selectedExcercise)
-                    viewModel.newScoreIsActive.toggle()
-                } label: {
-                    Image(systemName: "checkmark")
-                        .font(.title2)
-                }
-                .foregroundColor(.white)
-            }.padding()
-        }
+            }
+        }.frame(maxWidth: .infinity)
     }
 }
 

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct InteractionView<Content:View>: View {
+    @Environment(\.colorScheme) var colorScheme
     @Binding var isActive: Bool
     let content: Content
     let height: CGFloat
@@ -28,15 +29,13 @@ struct InteractionView<Content:View>: View {
                 Spacer()
                 HStack {
                     content
-                }.frame(height: height)
+                }.mask(RoundedRectangle(cornerRadius: 12))
+                .frame(height: height)
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .foregroundColor(Color.accentColor)
-                                .saturationFade(0.8,
-                                                startPoint: .bottom,
-                                                endPoint: .top)
+                        .topDownColorSettings()
                 )
-            }
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }.ignoresSafeArea()
     }
 }

@@ -21,8 +21,5 @@ extension Excercise: Encodable {
         try container.encode(name, forKey: .name)
         guard let scores = scores?.allObjects as? [Score] else { print("Failed"); return }
         try container.encode(scores, forKey: .scores)
-       
-//        let scores = scores?.allObjects as? [Score]
-//        print(scores)
     }
 }

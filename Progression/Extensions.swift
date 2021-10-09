@@ -25,7 +25,39 @@ extension NSManagedObject {
   }
 }
 
+extension EnvironmentObject {
+    var hasValue: Bool {
+        !String(describing: self).contains("_store: nil")
+    }
+}
+
+extension UIColor: ObservableObject {
+    
+}
 extension View {
+    func primaryColorSetting() -> some View {
+        modifier(PrimararyColorSetting())
+    }
+    func secondaryColorSetting() -> some View {
+        modifier(SecondaryColorSetting())
+    }
+    func tertiaryColorSetting() -> some View {
+        modifier(TertiaryColorSetting())
+    }
+    func primaryOppositeColorSetting() -> some View {
+        modifier(PrimaryOppositeColorSetting())
+    }
+    func secondaryOppositeColorSetting() -> some View {
+        modifier(SecondaryOppositeColorSetting())
+    }
+    func topDownColorSettings() -> some View {
+        modifier(TopDownColorSettings())
+    }
+    func shadowSettings() -> some View {
+        modifier(ShadowSettings())
+    }
+    
+    
     @ViewBuilder
     func saturationFade(_ amount: Double, startPoint: UnitPoint, endPoint: UnitPoint) -> some View {
         ZStack {
@@ -40,3 +72,5 @@ extension View {
         }
     }
 }
+
+

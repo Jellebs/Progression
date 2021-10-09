@@ -11,8 +11,8 @@ struct DeciderView: View {
     @EnvironmentObject var viewModel: ViewModel
     var body: some View {
         ZStack {
-            if viewModel.excerciseViewIsActive {
-                ExcercisesView()
+            if viewModel.exerciseViewIsActive {
+                ExercisesView()
             } else {
                 Home()
             }

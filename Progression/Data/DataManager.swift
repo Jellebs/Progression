@@ -14,17 +14,18 @@ class DataManager {
     //CoreData
     var dbHelper = CoreDataHelper.shared
     var scores: [JBScore] = []
-    var excercises: [Excercise] = []
+    var exercises: [Excercise] = []
     
     init() {
         scores = fetchScores()
-        excercises = fetchExcercises()
+        exercises = fetchExercises()
+        encode()
     }
     
     func encode() {
         do {
             let name = "Test.json"
-            let jsonData = try JSONEncoder().encode(excercises)
+            let jsonData = try JSONEncoder().encode(exercises)
             let documentPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
             let documentUrl = URL(fileURLWithPath: documentPath).appendingPathComponent(name)
             print(jsonData)
@@ -34,7 +35,7 @@ class DataManager {
         }
     }
     
-    func fetchExcercises() -> [Excercise] {
+    func fetchExercises() -> [Excercise] {
         let result: Result<[Excercise], Error> = dbHelper.read(Excercise.self, predicate: nil, limit: nil)
         switch result {
         case .success(let scoreEntities):
@@ -44,17 +45,18 @@ class DataManager {
         }
     }
     
-    func addExcercise(name: String) {
+    func addExercise(name: String) {
         let entity = Excercise.entity()
-        let newExcercise = Excercise(entity: entity, insertInto: dbHelper.context)
-        newExcercise.id = UUID()
-        newExcercise.name = name
-        dbHelper.create(newExcercise)
+        let newExercise = Excercise(entity: entity, insertInto: dbHelper.context)
+        newExercise.id = UUID()
+        newExercise.name = name
+        dbHelper.create(newExercise)
+        exercises = fetchExercises()
     }
-    func deleteExcercise(excercise: Excercise) {
+    func deleteExercise(excercise: Excercise) {
         dbHelper.delete(excercise)
     }
-    private func fetchExcercise(with id: UUID) -> Excercise? {
+    private func fetchExercise(with id: UUID) -> Excercise? {
         let predicate = NSPredicate(format: "id == %@", id as CVarArg)
         let result = dbHelper.readFirst(Excercise.self, predicate: predicate)
         switch result {
@@ -104,7 +106,7 @@ class DataManager {
         data.sets = Int16(score.sets)
         data.weight = score.weight
         dbHelper.update(data)
-        excercises = fetchExcercises()
+        exercises = fetchExercises()
     }
     func delete(for score: JBScore) {
         guard let score = fetchScore(for: score) else { return }
@@ -117,10 +119,10 @@ class DataManager {
         let newScore = Score(entity: entity, insertInto: dbHelper.context)
         newScore.date = Date()
         newScore.stats = score.stats
-        guard let excercise = fetchExcercise(with: score.excercise.id) else { return }
-        newScore.excercise = excercise
+        guard let exercise = fetchExercise(with: score.excercise.id) else { return }
+        newScore.excercise = exercise
         newScore.id = UUID()
         dbHelper.create(newScore)
-        dbHelper.saveContext(errorMessage: "Failed to add excercise")
+        dbHelper.saveContext(errorMessage: "Failed to add exercise")
     }
 }

@@ -6,127 +6,113 @@
 //
 
 import SwiftUI
-
+//MARK: - Mainview
 struct ScoreCell: View {
+    @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: ViewModel
-    @State var score: JBScore
-    @State var isMainView: Bool = true
-    
-    var body: some View {
-        Button {
-            isMainView.toggle()
-        } label: {
-            if isMainView {
-                ScoreCell_MainView(score: $score, colorTheme: .black)
-            } else {
-                DetailView(score: score)
-            }
-            
-        }.frame(maxWidth: .infinity)
-        .frame(height: 140)
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 8).foregroundColor(.accentColor)
-                        .opacity(0.4))
-    }
-}
-//MARK: Main View
-struct ScoreCell_MainView: View {
-    @Binding var score: JBScore
+    @EnvironmentObject var score: JBScore
     let colorTheme: Color
-    @EnvironmentObject var viewModel: ViewModel
+    init(colorTheme: Color = .black) {
+        self.colorTheme = colorTheme
+    }
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text("\(score.excercise.name)")
-                    .font(.title2)
+        CellView({ viewModel.deleteScore(score: score)}) {
+            VStack {
+                Spacer()
                 HStack {
-                    VStack {
-                        Text("Sets")
-                        Picker("Sets", selection: $score.stats.sets) {
-                            ForEach(0..<10) { i in
-                                Text("\(i)").foregroundColor(colorTheme).tag(Int(i))
-                            }
-                        }
-                        
-                        .id(score.stats.sets)
-                        .frame(width: 50, height: 60)
-                        .clipped()
+                    VStack(alignment: .leading) {
+                        Text("\(score.excercise.name)")
+                        Spacer()
+                        Pickers(colorTheme: .black)
+                            .font(.title3)
                     }
-                    VStack {
-                        Text("Reps")
-                        Picker("Reps", selection: $score.stats.reps) {
-                            ForEach(0..<25) { i in
-                                Text("\(i)").foregroundColor(colorTheme).tag(Int(i))
-                            }
-                        }
-                        .id(score.stats.reps)
-                        .frame(width: 50, height: 60)
-                        .clipped()
-                    }
-                    VStack {
-                        Text("Weights")
-                        Picker("Weights", selection: $score.stats.weight) {
-                            ForEach(0..<250) { i in
-                                Text("\(i)").foregroundColor(colorTheme).tag(Double(i))
-                            }
-                            
-                        }
-                        .frame(width: 50, height: 60)
-                        .clipped()
-                    }
-                }.frame(height: 100)
+                    Spacer()
+                    Text("Total volume \n \(score.stats.volume)")
+                }
+                Spacer()
+            }.padding()
+            .frame(maxHeight:.infinity)
+            .onChange(of: score.stats) { stat in
+                viewModel.saveScore(score: score)
             }
             
-            Spacer()
-            Text("Total volume: \(score.stats.volume)")
-                .font(.title2)
-                
-        }.foregroundColor(colorTheme)
+        }.font(.title2)
+        .multilineTextAlignment(.center)
+        .foregroundColor(.black)
     }
 }
-
-//MARK: Detailed View
-fileprivate struct DetailView: View {
-    @ObservedObject var score: JBScore
+// MARK: Pickers
+fileprivate struct Pickers: View {
     @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var score: JBScore 
+    @State var colorTheme: Color
     var body: some View {
         HStack {
-            //Save
-            RoundedRectangle(cornerRadius: 8)
-                .foregroundColor(.clear)
-                .shadow(color: .white, radius: 4, x: 4, y: 4)
-                .overlay(
-                    Button {
-                        viewModel.saveScore(score: score)
-                    } label: {
-                        Text("Save excercise")
-                            .bold()
+            VStack {
+                Text("Sets").fontWeight(.light)
+                Picker("Sets", selection: $score.stats.sets) {
+                    ForEach(0..<10) { i in
+                        PickerCell(number: "\(i)")
+                        .tag(Int(i))
                     }
-                )
-            //Delete
-            RoundedRectangle(cornerRadius: 8)
-                .foregroundColor(.clear)
-                .shadow(color: .black, radius: 4, x: 4, y: 4)
-                .overlay(
-                    Button {
-                        viewModel.deleteScore(score: score)
-                    } label: {
-                        Text("Delete excercise")
-                            .bold()
+                }
+                .frame(width: 50, height: 60)
+                .clipped()
+            }
+            VStack {
+                Text("Reps").fontWeight(.light)
+                Picker("Reps", selection: $score.stats.reps) {
+                    ForEach(0..<25) { i in
+                        PickerCell(number: "\(i)")
+                        .tag(Int(i))
                     }
-                )
-        }.multilineTextAlignment(.center)
+                }
+                .frame(width: 50, height: 60)
+                .clipped()
+            }
+            VStack {
+                Text("Weights").fontWeight(.light)
+                Picker("Weights", selection: $score.stats.weight) {
+                    ForEach(0..<250) { i in
+                        PickerCell(number: "\(i)")
+                        .tag(Double(i))
+                    }
+                }
+                .frame(width: 50, height: 60)
+                .clipped()
+            }
+            Spacer()
+        }.environmentObject(UIColor(colorTheme))
+        .frame(height: 74)
+    }
+}
+struct PickerCell: View {
+    @EnvironmentObject var colorTheme: UIColor
+    init(number: String = "") {
+        self.number = number
+        
+    }
+    init(excercise: Excercise) {
+        self.excercise = excercise
+    }
+    var excercise: Excercise? = nil
+    var number: String? = nil
+    var body: some View {
+        if excercise != nil {
+            Text(excercise!.name)
+                .tag(excercise.self)
+                .font(.title2)
+                .foregroundColor(_colorTheme.hasValue ? Color(colorTheme) : .primary)
+        } else {
+        Text(number!)
+            .fontWeight(.light)
+            .foregroundColor(_colorTheme.hasValue ? Color(colorTheme) : .primary)
+        }
     }
 }
 
 struct ScoreCell_Previews: PreviewProvider {
-    
-    @State static var set: Int = 10
-    @State static var reps: Int = 10
-    @State static var weight: Double = 10
-    @State static var volume: Int = 1000
-    
     static var previews: some View {
-        ScoreCell(score: JBScore(excercise: Excercise(), id: UUID(), stats: Stats(sets: 0, reps: 0, weight: 0)))
+        ScoreCell(colorTheme: .white)
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct Home: View {
+    
     var currentDate: Date = Date()
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -19,39 +20,38 @@ struct Home: View {
         return formatter
     } ()
     
-    
     @EnvironmentObject var viewModel: ViewModel 
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(alignment: .leading) {
-                TopBar {
-                    Button {
-                        viewModel.newScoreIsActive.toggle()
-                    } label: {
-                        Image(systemName: "plus") 
-                    }
-                }
-                
-                Text("\(dateFormatter.string(from: currentDate).capitalized)")
+                VStack(alignment: .leading) {
+                    TopBar { viewModel.newScoreIsActive.toggle() }
+                    Text("\(dateFormatter.string(from: currentDate).capitalized)")
+                        .foregroundColor(.primary)
+                }.primaryColorSetting()
+                .padding()
                 ScrollView(.vertical, showsIndicators: false) {
-                    ForEach(viewModel.scores, id: \.id) { score in
-                        ScoreCell(score: score)
-                            .padding(.bottom, 20)
+                    if !viewModel.hasConfigured() {
+                        IntroductionCell().padding()
                     }
-                    
-                }
-                Spacer()
-                
+                    VStack(spacing: 40) {
+                        ForEach(viewModel.scores, id: \.id) { score in
+                           ScoreCell(colorTheme: .black)
+                                .frame(height: 170)
+                                .environmentObject(score)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                 }
+                 Spacer()
             }
             .blur(radius: viewModel.newScoreIsActive ? 3 : 0)
-            .padding()
             if viewModel.newScoreIsActive {
                 InteractionView(isActive: $viewModel.newScoreIsActive) {
-                    NewScore(selectedExcercise: viewModel.excercises.first!)
+                    NewScore(selectedExercise: viewModel.exercises.first)
                 }
             }
         }
-        
     }
 }
 

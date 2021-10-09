@@ -7,23 +7,22 @@
 
 import SwiftUI
 
-struct NewExcercise: View {
-    @State var excerciseName: String = ""
+struct NewExercise: View {
+    @State var exerciseName: String = ""
 
     @EnvironmentObject var viewModel: ViewModel
     var body: some View {
         VStack {
-            Text("Give the excercise a name")
+            Text("Give the exercise a name")
                 .font(.title2)
             HStack {
-                CustomTextField(text: $excerciseName, placeholderColor: .white.opacity(0.8), placeholderText: "Excercise name")
+                CustomTextField(text: $exerciseName, placeholderColor: .black.opacity(0.8), placeholderText: "Exercise name")
                     .multilineTextAlignment(.center)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                 Spacer()
                 Button {
-                    viewModel.addExcercise(name: excerciseName)
-                    viewModel.newExcerciseIsActive.toggle()
-
+                    viewModel.addExcercise(name: exerciseName)
+                    viewModel.newExerciseIsActive.toggle()
                 } label: {
                     Image(systemName: "checkmark.square")
                         .font(.title3)
@@ -31,7 +30,7 @@ struct NewExcercise: View {
 
             }
             .padding()
-        }.foregroundColor(.white)
+        }.foregroundColor(.black)
     }
 }
 
@@ -54,6 +53,6 @@ struct CustomTextField: View {
 }
 struct NewActivity_Previews: PreviewProvider {
     static var previews: some View {
-        NewExcercise()
+        NewExercise()
     }
 }

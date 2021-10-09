@@ -8,31 +8,31 @@
 import Foundation
 import SwiftUI
 
-struct ExcercisesView: View {
+struct ExercisesView: View {
     @EnvironmentObject var viewModel: ViewModel
     
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack {
-                TopBar {
-                    Button {
-                        viewModel.newExcerciseIsActive.toggle()
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
+                TopBar { viewModel.newExerciseIsActive.toggle() }
+                    .primaryColorSetting()
                 ScrollView(.vertical, showsIndicators: false) {
-                    ForEach(viewModel.excercises, id: \.id) { excercise in
-                        ExcerciseCell(excercise: excercise)
+                    if viewModel.exercises.count != 0 {
+                        ForEach(viewModel.exercises, id: \.id) { excercise in
+                            ExerciseCell(excercise: excercise)
+                        }
+                    } else {
+                        IntroductionCell()
                     }
+                    
                 }
                 Spacer()
             }
             .blur(radius: checkForInteractions() ? 3 : 0)
             .padding()
-            if viewModel.newExcerciseIsActive {
-                InteractionView(isActive: $viewModel.newExcerciseIsActive) {
-                    NewExcercise()
+            if viewModel.newExerciseIsActive {
+                InteractionView(isActive: $viewModel.newExerciseIsActive) {
+                    NewExercise()
                 }
             }
             if viewModel.detailViewIsActive {
@@ -41,7 +41,7 @@ struct ExcercisesView: View {
         }
     }
     func checkForInteractions() -> Bool {
-        if viewModel.newExcerciseIsActive || viewModel.detailViewIsActive {
+        if viewModel.newExerciseIsActive || viewModel.detailViewIsActive {
             return true
         } else {
             return false
