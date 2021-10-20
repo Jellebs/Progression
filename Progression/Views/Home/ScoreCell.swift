@@ -11,11 +11,7 @@ struct ScoreCell: View, KeyboardReadable {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var score: JBScore
-    @State var isEditingName: Bool = false{
-        didSet {
-            print(newName)
-        }
-    }
+    @State var isEditingName: Bool = false 
     @State var newName: String = ""
     @State var isKeyboardShown: Bool = false
     let colorTheme: Color
@@ -69,7 +65,6 @@ struct ScoreCell: View, KeyboardReadable {
         .foregroundColor(.black)
     }
     func save() {
-        print(newName)
         if newName != "" && newName != score.excercise.name {
             score.excercise.name = newName
             viewModel.saveScore(score: score)

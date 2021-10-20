@@ -66,9 +66,11 @@ fileprivate struct GraphView: View {
     }
     private func makeLabels() -> some View {
         return ZStack {
-            ForEach(0..<graphScores.count, id: \.self) { score in
-                let x = columnXPoint(point: score)
-                Text("\(graphScores[score].volume)").position(x: x, y: height - padding)
+            if graphScores.count < 9 {
+                ForEach(0..<graphScores.count, id: \.self) { score in
+                    let x = columnXPoint(point: score)
+                    Text("\(graphScores[score].volume)").position(x: x, y: height - padding)
+                }
             }
         }
     }
@@ -122,18 +124,11 @@ fileprivate struct GraphView: View {
             let value = graphWidth + padding * 2
             return value
         }
-        guard CGFloat(point) / CGFloat(graphScores.count - 1) == 1 || point == 0 else {
-            let percentage = CGFloat(point) / CGFloat(graphScores.count-1)
-            let value = width * percentage - dotSize / 2
-            return value
-        }
-        if point == 0 {
-            let value = padding * 2
-            return value
-        } else {
-            let value = graphWidth + padding * 2
-            return value
-        }
+        let startPoint = padding * 2
+        let partOfWidth = (graphWidth) / CGFloat(graphScores.count - 1)
+        let value = startPoint + partOfWidth * CGFloat(point)
+        return value
+        
     }
     //MARK: Y Calculator
     private func columnYPoint(value: CGFloat) -> CGFloat {
