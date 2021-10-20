@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Home: View {
+struct Home: View, KeyboardReadable {
     
     var currentDate: Date = Date()
     let dateFormatter: DateFormatter = {
@@ -19,7 +19,6 @@ struct Home: View {
         formatter.dateFormat = "EEEE, MMM d, yyyy"
         return formatter
     } ()
-    
     @EnvironmentObject var viewModel: ViewModel 
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -36,7 +35,7 @@ struct Home: View {
                     }
                     VStack(spacing: 40) {
                         ForEach(viewModel.scores, id: \.id) { score in
-                           ScoreCell(colorTheme: .black)
+                            ScoreCell(colorTheme: .black)
                                 .frame(height: 170)
                                 .environmentObject(score)
                         }

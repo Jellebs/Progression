@@ -7,10 +7,17 @@
 
 import SwiftUI
 //MARK: - Mainview
-struct ScoreCell: View {
+struct ScoreCell: View, KeyboardReadable {
     @Environment(\.colorScheme) var colorScheme
     @EnvironmentObject var viewModel: ViewModel
     @EnvironmentObject var score: JBScore
+    @State var isEditingName: Bool = false{
+        didSet {
+            print(newName)
+        }
+    }
+    @State var newName: String = ""
+    @State var isKeyboardShown: Bool = false
     let colorTheme: Color
     init(colorTheme: Color = .black) {
         self.colorTheme = colorTheme
@@ -21,7 +28,16 @@ struct ScoreCell: View {
                 Spacer()
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("\(score.excercise.name)")
+                        ZStack(alignment: .leading) {
+                            if viewModel.detailViewIsActive {
+                                Text(!isEditingName ? score.excercise.name : "")
+                                TextField("", text: $newName)
+                                    .onTapGesture { newName = score.excercise.name; isEditingName.toggle() }
+                            } else {
+                                Text(score.excercise.name)
+                            }
+                        }
+                        .multilineTextAlignment(.leading)
                         Spacer()
                         Pickers(colorTheme: .black)
                             .font(.title3)
@@ -32,6 +48,18 @@ struct ScoreCell: View {
                 Spacer()
             }.padding()
             .frame(maxHeight:.infinity)
+            .onReceive(keyboardPublisher) { info in
+                isKeyboardShown = info
+                if info == false {
+                    save()
+                    isEditingName = false
+                }
+            }
+            .onChange(of: viewModel.detailViewIsActive) { value in
+                if value == false {
+                    save()
+                }
+            }
             .onChange(of: score.stats) { stat in
                 viewModel.saveScore(score: score)
             }
@@ -39,6 +67,17 @@ struct ScoreCell: View {
         }.font(.title2)
         .multilineTextAlignment(.center)
         .foregroundColor(.black)
+    }
+    func save() {
+        print(newName)
+        if newName != "" && newName != score.excercise.name {
+            score.excercise.name = newName
+            viewModel.saveScore(score: score)
+        } else if score.excercise.name == "" {
+            score.excercise.name = "No Name"
+            viewModel.saveScore(score: score)
+        }
+        viewModel.fetchExercises()
     }
 }
 // MARK: Pickers

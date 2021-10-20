@@ -24,22 +24,21 @@ fileprivate struct GraphView: View {
     var bottomBorderHeight: CGFloat { padding * 2 }
     var topBorderHeight: CGFloat = 60
     var graphHeight: CGFloat { return height - (bottomBorderHeight + topBorderHeight)}
-    var graphWidth: CGFloat { return width - padding*2 }
+    var graphWidth: CGFloat { return width - padding*4 }
     let formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .medium
         formatter.dateStyle = .short
         return formatter
     } ()
+    let dotSize: CGFloat = 20
     var graphScores: [Score] {
         guard let exercise = viewModel.currentExercise else { return [] }
         guard let scores = exercise.scores?.allObjects as? [Score] else { return [] }
         let sorted = scores.sorted(by: { $0.date < $1.date} )
         return sorted
     }
-    
     var body: some View {
-        
         ZStack {
             if graphScores.count == 0 { Color.clear.frame(maxWidth: .infinity, maxHeight: .infinity) }
             else {
@@ -57,8 +56,8 @@ fileprivate struct GraphView: View {
                             viewModel.detailViewIsActive.toggle()
                         }
                 }
-                makeLabels()
-                    .foregroundColor(.black)
+//                makeLabels()
+//                    .foregroundColor(.black)
             }
         }.background(
             RoundedRectangle(cornerRadius: 8)
@@ -75,10 +74,10 @@ fileprivate struct GraphView: View {
     }
     //MARK: Dots
     private func makeDot(point at: Int) -> Path {
-        let size: CGFloat = 20
-        let x = columnXPoint(point: at) - size / 2
-        let y = columnYPoint(value: CGFloat(graphScores[at].volume)) - size / 2
-        let path = Path(ellipseIn: CGRect(x: x, y: y, width: size, height: size))
+        
+        let x = columnXPoint(point: at) - dotSize / 2
+        let y = columnYPoint(value: CGFloat(graphScores[at].volume)) - dotSize / 2
+        let path = Path(ellipseIn: CGRect(x: x, y: y, width: dotSize, height: dotSize))
         return path
     }
     //MARK: The line path
@@ -87,7 +86,7 @@ fileprivate struct GraphView: View {
         if oneGraphscore() {
             path.move(to: CGPoint(x: padding, y: height-bottomBorderHeight))
         } else {
-            path.move(to: CGPoint(x: padding*2, y: columnYPoint(value: CGFloat(graphScores[0].volume))))
+        path.move(to: CGPoint(x: padding*2, y: columnYPoint(value: CGFloat(graphScores[0].volume))))
         }
         for i in 0..<graphScores.count {
             let x = columnXPoint(point: i)
@@ -119,10 +118,22 @@ fileprivate struct GraphView: View {
     }
     //MARK: X Calculator
     private func columnXPoint(point: Int) -> CGFloat {
-        let percentage = CGFloat(point + 1) / CGFloat(graphScores.count)
-        print(graphWidth)
-        let value = graphWidth * percentage - padding
-        return value
+        guard !oneGraphscore() else {
+            let value = graphWidth + padding * 2
+            return value
+        }
+        guard CGFloat(point) / CGFloat(graphScores.count - 1) == 1 || point == 0 else {
+            let percentage = CGFloat(point) / CGFloat(graphScores.count-1)
+            let value = width * percentage - dotSize / 2
+            return value
+        }
+        if point == 0 {
+            let value = padding * 2
+            return value
+        } else {
+            let value = graphWidth + padding * 2
+            return value
+        }
     }
     //MARK: Y Calculator
     private func columnYPoint(value: CGFloat) -> CGFloat {

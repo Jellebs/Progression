@@ -29,10 +29,11 @@ struct InteractionView<Content:View>: View, KeyboardReadable {
             VStack {
                 Spacer()
                 HStack {
-                    content.padding(.bottom, isKeyboardShown ? 200 : 0)
-                    
+                    content
+                        .padding(.bottom, isKeyboardShown ? 300 : 0)
+                        
                 }.mask(RoundedRectangle(cornerRadius: 12))
-                .frame(height: isKeyboardShown ? height + 200 : height)
+                .frame(height: isKeyboardShown ? height + 300 : height)
                 .onReceive(keyboardPublisher) { info in
                     isKeyboardShown = info
                 }
