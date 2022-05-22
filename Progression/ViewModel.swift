@@ -67,7 +67,9 @@ final class ViewModel: ObservableObject {
         dataManager.delete(for: score)
         fetchScores()
         fetchExercises()
-        detailViewIsActive.toggle()
+        if detailViewIsActive {
+            detailViewIsActive.toggle()
+        }
     }
     func hasConfigured() -> Bool {
         let defaults = UserDefaults.standard

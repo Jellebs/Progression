@@ -29,6 +29,7 @@ struct CellView<Content: View>: View {
                     .frame(maxHeight: .infinity)
                 let size: CGFloat = 50
                 Image(systemName: "trash.fill")
+                    .resizable()
                     .frame(width: size, height: size)
                     .offset(x: geo.size.width * (1-first) - size/2, y: geo.size.height * 0.5 - size/2)
                     .foregroundColor(.white)
