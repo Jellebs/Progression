@@ -22,6 +22,7 @@ final class ViewModel: ObservableObject {
     @Published var exerciseViewIsActive: Bool = false
     @Published var graphIsShown: Bool = false
     @Published var currentExercise: Excercise?
+    @Published var exerciseDeletionViewIsActive: Bool = false { didSet { print( oldValue)}}
     //DetailScore
     @Published var detailedScore: JBScore = JBScore()
     @Published var detailViewIsActive: Bool = false
@@ -43,6 +44,25 @@ final class ViewModel: ObservableObject {
         dataManager.addExercise(name: name)
         fetchExercises()
     }
+    func checkForExerciseInteractions() -> Bool {
+        if newExerciseIsActive || detailViewIsActive || exerciseDeletionViewIsActive {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func deleteExercise() {
+        guard let exercise = currentExercise else { return }
+        dataManager.deleteExercise(excercise: exercise)
+        update()
+        exerciseDeletionViewIsActive.toggle()
+    }
+    func exerciseForDeletion(_ exercise: Excercise) {
+        currentExercise = exercise
+        exerciseDeletionViewIsActive.toggle()
+    }
+    
     
     //Score
     func fetchScores() {
@@ -65,8 +85,7 @@ final class ViewModel: ObservableObject {
     
     func deleteScore(score: JBScore) {
         dataManager.delete(for: score)
-        fetchScores()
-        fetchExercises()
+        update()
         if detailViewIsActive {
             detailViewIsActive.toggle()
         }
@@ -81,4 +100,8 @@ final class ViewModel: ObservableObject {
         defaults.setValue(true, forKey: "hasConfigured")
     }
     
+    func update() {
+        fetchScores()
+        fetchExercises()
+    }
 }

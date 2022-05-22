@@ -16,10 +16,15 @@ struct ExercisesView: View {
             VStack {
                 TopBar { viewModel.newExerciseIsActive.toggle() }
                     .primaryColorSetting()
+                    .blur(radius: viewModel.checkForExerciseInteractions() ? 3 : 0)
+                    .padding()
                 ScrollView(.vertical, showsIndicators: false) {
                     if viewModel.exercises.count != 0 {
-                        ForEach(viewModel.exercises, id: \.id) { excercise in
-                            ExerciseCell(excercise: excercise)
+                        VStack(spacing: 10) {
+                            ForEach(viewModel.exercises, id: \.id) { excercise in
+                                ExerciseCell(exercise: excercise)
+                                    .blur(radius: viewModel.checkForExerciseInteractions() ? 3 : 0)
+                            }
                         }
                     } else {
                         IntroductionCell()
@@ -28,8 +33,6 @@ struct ExercisesView: View {
                 }
                 Spacer()
             }
-            .blur(radius: checkForInteractions() ? 3 : 0)
-            .padding()
             if viewModel.newExerciseIsActive {
                 InteractionView(isActive: $viewModel.newExerciseIsActive) {
                     NewExercise()
@@ -38,13 +41,10 @@ struct ExercisesView: View {
             if viewModel.detailViewIsActive {
                 ScoreDetails()
             }
+            if viewModel.exerciseDeletionViewIsActive {
+                Exercise_deletion(onConfirm: { viewModel.deleteExercise() }, onDeny: {}, isActive: $viewModel.exerciseDeletionViewIsActive)
+            }
         }
     }
-    func checkForInteractions() -> Bool {
-        if viewModel.newExerciseIsActive || viewModel.detailViewIsActive {
-            return true
-        } else {
-            return false
-        }
-    }
+    
 }

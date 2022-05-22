@@ -54,6 +54,8 @@ class DataManager {
     }
     func deleteExercise(excercise: Excercise) {
         dbHelper.delete(excercise)
+        scores = fetchScores()
+        exercises = fetchExercises()
     }
     private func fetchExercise(with id: UUID) -> Excercise? {
         let predicate = NSPredicate(format: "id == %@", id as CVarArg)

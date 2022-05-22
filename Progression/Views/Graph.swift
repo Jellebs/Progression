@@ -42,9 +42,6 @@ fileprivate struct GraphView: View {
         ZStack {
             if graphScores.count == 0 { Color.clear.frame(maxWidth: .infinity, maxHeight: .infinity) }
             else {
-                //            makeLines()
-                //                .stroke(lineWidth: 2)
-                //                .foregroundColor(.black).opacity(0.4)
                 makePoints()
                     .stroke(lineWidth: 4)
                     .secondaryOppositeColorSetting()
@@ -56,8 +53,7 @@ fileprivate struct GraphView: View {
                             viewModel.detailViewIsActive.toggle()
                         }
                 }
-//                makeLabels()
-//                    .foregroundColor(.black)
+
             }
         }.background(
             RoundedRectangle(cornerRadius: 8)

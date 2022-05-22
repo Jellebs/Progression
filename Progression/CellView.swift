@@ -36,32 +36,31 @@ struct CellView<Content: View>: View {
                     .onTapGesture {
                         onLeftSwipe()
                     }
-                HStack {
-                    content
-                }
-                .background(Rectangle()
-                                .secondaryColorSetting())
-                .offset(x: offset.width+sliderPosition)
-                .gesture(
-                    DragGesture()
-                        .updating($offset, body: { (value, state, transaction) in
-                            if value.translation.width < 0 {
-                                state = value.translation
+                content
+                    .frame(maxHeight: .infinity)
+                    .background(Rectangle()
+                                    .secondaryColorSetting())
+                    .offset(x: offset.width+sliderPosition)
+                    .gesture(
+                        DragGesture()
+                            .updating($offset, body: { (value, state, transaction) in
+                                if value.translation.width < 0 {
+                                    state = value.translation
+                                }
+                                if value.translation.width + sliderPosition < -geo.size.width * second {
+                                    onLeftSwipe()
+                                }
                             }
-                            if value.translation.width + sliderPosition < -geo.size.width * second {
-                                onLeftSwipe()
+                            )
+                            .onEnded { value in
+                                // to left
+                                if value.translation.width < -geo.size.width * first {
+                                    sliderPosition = -geo.size.width * (first + first)
+                                } else {
+                                    sliderPosition = 0
+                                }
                             }
-                        }
-                        )
-                        .onEnded { value in
-                            // to left
-                            if value.translation.width < -geo.size.width * first {
-                                sliderPosition = -geo.size.width * (first + first)
-                            } else {
-                                sliderPosition = 0
-                            }
-                        }
-                )
+                    )
             }
         }.background(Rectangle().shadowSettings()
         )

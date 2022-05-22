@@ -11,36 +11,49 @@ struct ExerciseCell: View {
     @Environment(\.colorScheme) var colorScheme
     @State var isActive: Bool = false
     @EnvironmentObject var viewModel: ViewModel
-    @State var excercise: Excercise
+    @State var exercise: Excercise
     var body: some View {
         VStack(alignment: .leading) {
             Button {
-                viewModel.currentExercise = excercise
+                viewModel.currentExercise = exercise
                 isActive.toggle()
             } label: {
-            RoundedRectangle(cornerRadius: 8)
+            Rectangle()
                 .secondaryColorSetting()
+                
                 .overlay(
-                    HStack { Text(excercise.name).font(.title).foregroundColor(colorScheme == .dark ? .black : .black); Spacer() }.padding()
+                    CellView({ viewModel.exerciseForDeletion(exercise)}) {
+                        VStack {
+                            HStack {
+                                Text(exercise.name).font(.title)
+                                    .foregroundColor(colorScheme == .dark ? .black : .black)
+                                Spacer()
+                                    
+                            }.padding(.horizontal)
+                            
+                            if isActive {
+                                Graph().frame(height: 300)
+                            }
+                        }
+                        
+                    }
                 )
+                
             }
-            if isActive {
-                Graph().frame(height: 300)
-            }
+            
         }
+        .frame(height: isActive ? 390 : 90)
         .onChange(of: viewModel.currentExercise) { _ in
-            if viewModel.currentExercise?.id != excercise.id {
+            if viewModel.currentExercise?.id != exercise.id {
                 isActive = false
             }
         }
-        .frame(height: isActive ? 380 : 80)
-        .multilineTextAlignment(.leading)
     }
 }
 
 struct ExcerciseCell_Previews: PreviewProvider {
     
     static var previews: some View {
-        ExerciseCell(excercise: Excercise())
+        ExerciseCell(exercise: Excercise())
     }
 }
