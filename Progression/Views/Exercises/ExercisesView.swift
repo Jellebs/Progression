@@ -26,7 +26,7 @@ struct ExercisesView: View {
                                     .blur(radius: viewModel.checkForExerciseInteractions() ? 3 : 0)
                             }
                         }
-                    } else {
+                    } else if !viewModel.hasConfigured() {
                         IntroductionCell()
                     }
                     
